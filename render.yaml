@@ -1,1 +1,12 @@
-
+# Exported from Render on 2025-09-06T21:35:07Z
+services:
+- type: web
+  name: TFC
+  runtime: python
+  repo: https://github.com/SnakeEyes070/TFC
+  plan: free
+  region: singapore
+  buildCommand: pip install -r requirements.txt
+  startCommand: gunicorn app:app
+  autoDeployTrigger: commit
+version: "1"
