@@ -25,4 +25,6 @@ ENV DISPLAY=:0
 EXPOSE 5000
 
 # Use simpler command for debugging
-CMD ["python", "app.py"]
+# Change the last line in Dockerfile to:
+CMD ["gunicorn", "app:app", "-b", "0.0.0.0:5000", "--log-level", "debug", "--access-logfile", "-"]
+
