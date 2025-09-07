@@ -1,18 +1,14 @@
-FROM python:3.10-alpine
+FROM python:3.10-slim
 
 WORKDIR /app
 
-# Alpine uses apk instead of apt-get
-RUN apk update && \
-    apk add --no-cache \
-    libstdc++ \
-    libgcc \
-    musl-dev \
-    linux-headers \
-    g++ \
-    make
+# Install only essential system packages
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first
+# Copy requirements and install Python packages
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
@@ -20,9 +16,13 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy application code
 COPY . .
 
-# Create directories
+# Create necessary directories
 RUN mkdir -p uploads results
+
+# Set environment variable to avoid pyplot issues
+ENV DISPLAY=:0
 
 EXPOSE 5000
 
-CMD ["gunicorn", "app:app", "-b", "0.0.0.0:5000"]
+# Use simpler command for debugging
+CMD ["python", "app.py"]
